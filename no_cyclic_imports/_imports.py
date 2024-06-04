@@ -93,11 +93,12 @@ def determine_source_module_name(abs_path: str) -> str:
         module_name = os.path.basename(abs_path)
         init_py_path = os.path.join(package_path, "__init__.py")
 
-        parts.append(module_name)
+        if module_name != "__init__":
+            parts.insert(0, module_name)
         abs_path = package_path
 
         if not os.path.exists(init_py_path):
-            module_name = ".".join(reversed(parts))
+            module_name = ".".join(parts)
             _logger.debug(
                 f"File {abs_path_backup!r} found to be module {module_name!r}.",
             )
