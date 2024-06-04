@@ -4,6 +4,7 @@
 import logging
 import os.path
 import sys
+from collections import defaultdict
 
 from import_deps import ast_imports
 from networkx import DiGraph, chordless_cycles
@@ -150,7 +151,7 @@ def _wrapped_ast_imports(abs_path):
 
 class ImportGraph:
     def __init__(self):
-        self._imports_from = {}
+        self._imports_from = defaultdict(set)
         self._seen_files = set()
         self._tried_to_follow = set()
 
@@ -175,10 +176,7 @@ class ImportGraph:
         self._seen_files.add(abs_path)
 
         source_module = determine_source_module_name(abs_path)
-        target_modules = self._imports_from.setdefault(
-            without_dot_init(source_module),
-            set(),
-        )
+        target_modules = self._imports_from[without_dot_init(source_module)]
 
         for (
             module_name_or_none,
